@@ -24,7 +24,7 @@ public class WebAPI {
 	}
 	
 	public static void downloadWorld(File file, String secret, String uuid) throws Exception {
-		String url = "http://localhost/worlds/api.php?type=download&secretKey="+secret+"&uuid="+uuid;
+		String url = "http://172.18.0.1/worlds/api.php?type=download&secretKey="+secret+"&uuid="+uuid;
 		Response res = client.newCall(new Request.Builder().url(url).get().build()).execute();
 		FileOutputStream fos = null;
 		try {
