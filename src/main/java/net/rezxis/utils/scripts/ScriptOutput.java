@@ -18,6 +18,7 @@ public class ScriptOutput extends Writer {
 	@Override
 	public void write(char[] cbuf, int off, int len) throws IOException {
 		content += String.valueOf(cbuf);
+		System.out.println(cbuf);
 	}
 
 	@Override
