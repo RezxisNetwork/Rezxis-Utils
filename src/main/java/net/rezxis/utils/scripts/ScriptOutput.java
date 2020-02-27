@@ -9,7 +9,7 @@ import net.rezxis.utils.WebAPI.DiscordWebHookEnum;
 public class ScriptOutput extends Writer {
 
 	private String scriptURL;
-	private String content = "";
+	public String content = "";
 	
 	public ScriptOutput(String scriptURL) {
 		this.scriptURL = scriptURL;
@@ -18,16 +18,14 @@ public class ScriptOutput extends Writer {
 	@Override
 	public void write(char[] cbuf, int off, int len) throws IOException {
 		content += String.valueOf(cbuf);
-		System.out.println(cbuf);
+		System.out.println(content);
 	}
 
 	@Override
 	public void flush() throws IOException {
-		WebAPI.webhook(DiscordWebHookEnum.SCRIPTS, scriptURL+"\r\n"+content);
 	}
 
 	@Override
 	public void close() throws IOException {
-		WebAPI.webhook(DiscordWebHookEnum.SCRIPTS, scriptURL+"\r\n"+"closed.");
 	}
 }

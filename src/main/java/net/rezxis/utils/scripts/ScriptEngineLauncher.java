@@ -7,6 +7,9 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import net.rezxis.utils.WebAPI;
+import net.rezxis.utils.WebAPI.DiscordWebHookEnum;
+
 public class ScriptEngineLauncher {
 	
 	public static void run(String messageURL, String script) {
@@ -21,8 +24,9 @@ public class ScriptEngineLauncher {
 		} catch (ScriptException e) {
 			e.printStackTrace();
 		}
+		System.out.println(output.content);
+		WebAPI.webhook(DiscordWebHookEnum.SCRIPTS, messageURL+"\r\n"+output.content);
 		try {
-			output.flush();
 			output.close();
 		} catch (IOException e) {
 			e.printStackTrace();
