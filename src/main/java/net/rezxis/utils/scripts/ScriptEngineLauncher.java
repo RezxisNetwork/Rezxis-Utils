@@ -12,7 +12,7 @@ import net.rezxis.utils.WebAPI.DiscordWebHookEnum;
 
 public class ScriptEngineLauncher {
 	
-	private static final String RETURN = "\\r\\n";
+	private static final String RETURN = "\r\n";
 	
 	public static void run(String messageURL, String script) {
 		ScriptEngineManager manager = new ScriptEngineManager();
