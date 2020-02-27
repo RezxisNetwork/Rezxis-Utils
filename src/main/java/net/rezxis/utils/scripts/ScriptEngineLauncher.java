@@ -1,6 +1,7 @@
 package net.rezxis.utils.scripts;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -15,21 +16,14 @@ public class ScriptEngineLauncher {
 	public static void run(String messageURL, String script) {
 		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine engine = manager.getEngineByName("JavaScript");
-		ScriptOutput output = new ScriptOutput(messageURL);
 		ScriptContext context = engine.getContext();
-		context.setWriter(output);
+		context.setWriter(new StringWriter());
 		engine.setContext(context);
 		try {
 			engine.eval(script);
 		} catch (ScriptException e) {
 			e.printStackTrace();
 		}
-		System.out.println(output.content);
-		WebAPI.webhook(DiscordWebHookEnum.SCRIPTS, messageURL+"\r\n"+output.content);
-		try {
-			output.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		WebAPI.webhook(DiscordWebHookEnum.SCRIPTS, messageURL+"\r\n"+((StringWriter)context.getWriter()).toString());
 	}
 }
