@@ -22,11 +22,11 @@ public class ScriptOutput extends Writer {
 
 	@Override
 	public void flush() throws IOException {
-		WebAPI.webhook(DiscordWebHookEnum.SCRIPTS, String.format("```%s```", scriptURL)+"\r\n"+content);
+		WebAPI.webhook(DiscordWebHookEnum.SCRIPTS, scriptURL+"\r\n"+content);
 	}
 
 	@Override
 	public void close() throws IOException {
-		WebAPI.webhook(DiscordWebHookEnum.SCRIPTS, String.format("```%s```", scriptURL)+"\r\n"+"closed.");
+		WebAPI.webhook(DiscordWebHookEnum.SCRIPTS, scriptURL+"\r\n"+"closed.");
 	}
 }

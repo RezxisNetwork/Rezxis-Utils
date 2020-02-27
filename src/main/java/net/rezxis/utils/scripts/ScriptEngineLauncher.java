@@ -22,6 +22,7 @@ public class ScriptEngineLauncher {
 			e.printStackTrace();
 		}
 		try {
+			output.flush();
 			output.close();
 		} catch (IOException e) {
 			e.printStackTrace();
