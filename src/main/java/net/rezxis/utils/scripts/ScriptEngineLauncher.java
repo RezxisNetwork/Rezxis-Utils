@@ -1,6 +1,5 @@
 package net.rezxis.utils.scripts;
 
-import java.io.IOException;
 import java.io.StringWriter;
 
 import javax.script.ScriptContext;
@@ -13,6 +12,8 @@ import net.rezxis.utils.WebAPI.DiscordWebHookEnum;
 
 public class ScriptEngineLauncher {
 	
+	private static final String RETURN = "\\r\\n";
+	
 	public static void run(String messageURL, String script) {
 		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine engine = manager.getEngineByName("JavaScript");
@@ -24,6 +25,6 @@ public class ScriptEngineLauncher {
 		} catch (ScriptException e) {
 			e.printStackTrace();
 		}
-		WebAPI.webhook(DiscordWebHookEnum.SCRIPTS, messageURL+"\r\n"+((StringWriter)context.getWriter()).toString());
+		WebAPI.webhook(DiscordWebHookEnum.SCRIPTS, messageURL+RETURN+"```"+((StringWriter)context.getWriter()).toString()+"```");
 	}
 }
