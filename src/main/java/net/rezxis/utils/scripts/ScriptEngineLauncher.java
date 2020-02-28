@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 
 import net.rezxis.utils.WebAPI;
 import net.rezxis.utils.WebAPI.DiscordWebHookEnum;
@@ -22,9 +21,12 @@ public class ScriptEngineLauncher {
 		engine.setContext(context);
 		try {
 			engine.eval(script);
-		} catch (ScriptException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+			WebAPI.webhook(DiscordWebHookEnum.SCRIPTS, messageURL+RETURN+((StringWriter)context.getWriter()).toString()
+					+RETURN+"EXCEPTION : "+RETURN+e.getMessage());
+			return;
 		}
-		WebAPI.webhook(DiscordWebHookEnum.SCRIPTS, messageURL+RETURN+"```"+((StringWriter)context.getWriter()).toString()+"```");
+		WebAPI.webhook(DiscordWebHookEnum.SCRIPTS, messageURL+RETURN+((StringWriter)context.getWriter()).toString());
 	}
 }
