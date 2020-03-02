@@ -14,15 +14,20 @@ public class ScriptEngineLauncher {
 	private static final String RETURN = "\r\n";
 	
 	public static void run(String messageURL, String script) {
-		ScriptEngineManager manager = new ScriptEngineManager();
-		ScriptEngine engine = manager.getEngineByName("JavaScript");
-		ScriptContext context = engine.getContext();
-		context.setWriter(new StringWriter());
-		engine.setContext(context);
+		ScriptContext context = null;
 		try {
+			ScriptEngineManager manager = new ScriptEngineManager();
+			ScriptEngine engine = manager.getEngineByName("JavaScript");
+			context = engine.getContext();
+			context.setWriter(new StringWriter());
+			engine.setContext(context);
 			engine.eval(script);
 		} catch (Exception e) {
 			e.printStackTrace();
+			if (context == null) {
+				WebAPI.webhook(DiscordWebHookEnum.SCRIPTS, messageURL+RETURN+"EXCEPTION : "+RETURN+e.getMessage());
+				return;
+			}
 			WebAPI.webhook(DiscordWebHookEnum.SCRIPTS, messageURL+RETURN+((StringWriter)context.getWriter()).toString()
 					+RETURN+"EXCEPTION : "+RETURN+e.getMessage());
 			return;
