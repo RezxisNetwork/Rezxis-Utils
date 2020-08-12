@@ -63,11 +63,11 @@ public class WebAPI {
 	}
 	
 	public enum DiscordWebHookEnum {
-		REPORT("https://discordapp.com/api/webhooks/668590844609167363/lhRTzgcVulx2ulTyg-RRjcL8kxhEJ1tD4qz50DRzr_Vm9O5npXSOaBjT_d1IuVy5MvtA","rezxis-reports"),
-		CONNECT("https://discordapp.com/api/webhooks/669826084996644886/_TC052RlfcIa7HKnCjXKYgj8zoSgpXLmTyZSwudjRarq2U7kDjzuuUMxItbtO_yIjO3s","rezxis-connections"),
-		PUNISHMENT("https://discordapp.com/api/webhooks/669483547530231819/Ok5j3TdC7iosol4DLW1l_DVJY6op9nJcW_XYyqDyqItv1hmuTxpY6tg1C88hZKvGdrUT","rezxis-punishments"),
-		PRIVATE("https://discordapp.com/api/webhooks/678432819613270086/qYl8NaYvNOp_YmryUR1BPTroz-3hr8IR-fkNHXWZB5nc-xaQ9r1BNyEYjjFNRK3_OlJ6","rezxis-private-log"),
-		SCRIPTS("https://discordapp.com/api/webhooks/682529873503322123/pwYUQGXfRtZtbba_GonIjwPTY9XolVxSnYuhAXYzjm_dxxvvtfvS-KZFzC1v8Z2elEN3","rezxis-scripts");
+		REPORT("https://discordapp.com/api/webhooks/743081693006528592/Jis3_zTTNlo65_Ch7JmqBkq5sdMXwmiIVQkO5hiIOXm00p-axPi_PULLtwanEnHHa2ya","rezxis-reports"),
+		CONNECT("https://discordapp.com/api/webhooks/743081771540676618/AhVHOtG_NSGTrNdZrVFIWTKOfDzLKvU7Gq6d8hFw24RcRqIOVv0cVpKrTlmDgshpjD2S","rezxis-connections"),
+		PUNISHMENT("https://discordapp.com/api/webhooks/743082110876909639/rB1JfXCjfcz5kPimxRdtmNNLowqper2P8GXAZaIHoRr2mr_VKbYvaCJvitgCK4T0fdpf","rezxis-punishments"),
+		PRIVATE("https://discordapp.com/api/webhooks/743083080209924097/cxm8fcYBxDXThtPkbSmJXAB7qdlNkakZGzsa0gxOb9ZZ_0BVTHxUMiNBSphRF40g0HZo","rezxis-private-log"),
+		SCRIPTS("https://discordapp.com/api/webhooks/743083200624066591/ylhOJS4bgQDCqmcTLB25JlJ-Yg6VDyoeR5VE0J1-E7mHTwLYCw1_v-2UFN04ELkrYY-5","rezxis-scripts");
 		String url;
 		String name;
 		
