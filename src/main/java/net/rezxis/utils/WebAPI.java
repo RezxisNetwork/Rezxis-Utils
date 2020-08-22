@@ -53,7 +53,7 @@ public class WebAPI {
 				try {
 					@SuppressWarnings("deprecation")
 					Request request = new Request.Builder().url(en.url).addHeader("User-Agent", "Rezxis")
-							.post(RequestBody.create(MediaType.parse("application/JSON; charset=utf-8"), new Gson().toJson(new DiscordWebHookRequest(en.name,"https://i.gyazo.com/141e75149b5cfe462af38d922027043f.png",contents)))).build();
+							.post(RequestBody.create(MediaType.parse("application/JSON; charset=utf-8"), new Gson().toJson(new DiscordWebHookRequest(en.name,"https://i.gyazo.com/141e75149b5cfe462af38d922027043f.png","```"+contents+"```")))).build();
 					Response response = client.newCall(request).execute();
 					response.close();
 				} catch (Exception ex) {
