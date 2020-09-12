@@ -38,10 +38,17 @@ public class WebAPI {
 		}
 	}
 	
-	public static McuaResponse checkIP(String ip) throws IOException {
+	public static CheckIPResponse checkIP(String ip) throws IOException {
+		{
+			String freevpn = "https://freevpn.gg/c/"+ip;
+			Response response = client.newCall(new Request.Builder().url(freevpn).get().build()).execute();
+			if (!response.body().string().contains("Not found")) {
+				return new CheckIPResponse(ip, "true", "FREEVPN", "FREEVPN");
+			}
+		}
 		String url = "https://api.mcua.net/checkip/"+ip;
 		Response response = client.newCall(new Request.Builder().url(url).get().build()).execute();
-		McuaResponse rs = gson.fromJson(response.body().string(), McuaResponse.class);
+		CheckIPResponse rs = gson.fromJson(response.body().string(), CheckIPResponse.class);
 		response.close();
 		return rs;
 	}
@@ -78,13 +85,13 @@ public class WebAPI {
 		}
 	}
 	
-	public class McuaResponse {
+	public static class CheckIPResponse {
 		private String ip;
 		private String bad;
 		private String type;
 		private String country;
 		
-		public McuaResponse (String ip, String bad, String type, String country) {
+		public CheckIPResponse (String ip, String bad, String type, String country) {
 			this.ip = ip;
 			this.bad = bad;
 			this.type = type;
