@@ -3,6 +3,8 @@ package net.rezxis.utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 
@@ -18,6 +20,7 @@ public class WebAPI {
 
 	private static OkHttpClient client;
 	private static Gson gson = new Gson();
+	private static Pattern pattern = Pattern.compile("last check (.*) (.*) ago");
 	
 	static {
 		client = new OkHttpClient.Builder().build();
@@ -42,7 +45,19 @@ public class WebAPI {
 		{
 			String freevpn = "https://freevpn.gg/c/"+ip;
 			Response response = client.newCall(new Request.Builder().url(freevpn).get().build()).execute();
-			if (!response.body().string().contains("Not found")) {
+			String body = response.body().string();
+			if (!body.contains("Not found")) {
+				Matcher matcher = pattern.matcher(body);
+				if (matcher.find()) {
+					String type = matcher.group(2);
+					if (type.equalsIgnoreCase("days")) {
+						if (Integer.valueOf(matcher.group(1)) > 10) {
+							return new CheckIPResponse(ip, "false", "FREEVPN", "FREEVPN");
+						}
+					} else if (type.equalsIgnoreCase("months") || type.equalsIgnoreCase("years")) {
+						return new CheckIPResponse(ip, "false", "FREEVPN", "FREEVPN");
+					}
+				}
 				return new CheckIPResponse(ip, "true", "FREEVPN", "FREEVPN");
 			}
 		}
