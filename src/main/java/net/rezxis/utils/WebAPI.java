@@ -52,6 +52,7 @@ public class WebAPI {
 					String type = matcher.group(2);
 					if (type.equalsIgnoreCase("days")) {
 						if (Integer.valueOf(matcher.group(1)) > 10) {
+							System.out.println(matcher.group(1));
 							return new CheckIPResponse(ip, "false", "FREEVPN", "FREEVPN");
 						}
 					} else if (type.equalsIgnoreCase("months") || type.equalsIgnoreCase("years")) {
