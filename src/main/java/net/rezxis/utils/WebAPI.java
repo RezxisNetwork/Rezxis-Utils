@@ -3,10 +3,21 @@ package net.rezxis.utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.PortUnreachableException;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.net.SocketFactory;
+import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.io.IOUtils;
 
@@ -23,6 +34,8 @@ public class WebAPI {
 	private static OkHttpClient client;
 	private static Gson gson = new Gson();
 	private static Pattern pattern = Pattern.compile("last check (.*) (.*) ago");
+	private static Pattern patternTCP = Pattern.compile("TCP\\((.*)\\)");
+	private static Pattern patternUDP = Pattern.compile("UDP\\((.*)\\)");
 	public static ExecutorService pool = null;
 	
 	static {
@@ -46,6 +59,10 @@ public class WebAPI {
 		res.close();
 	}
 	
+	public static void main(String[] args) throws IOException {
+		System.out.println(gson.toJson(checkIP("60.79.209.85")));
+	}
+	
 	public static CheckIPResponse checkIP(String ip) throws IOException {
 		{
 			String freevpn = "https://freevpn.gg/c/"+ip;
@@ -55,24 +72,74 @@ public class WebAPI {
 			if (!body.contains("Not found")) {
 				Matcher matcher = pattern.matcher(body);
 				if (matcher.find()) {
+					boolean flag = false;
 					String type = matcher.group(2);
-					if (type.equalsIgnoreCase("days")) {
-						if (Integer.valueOf(matcher.group(1)) > 7) {
-							System.out.println(matcher.group(1));
-							return new CheckIPResponse(ip, "false", "FREEVPN", "FREEVPN");
-						}
-					} else if (type.equalsIgnoreCase("months") || type.equalsIgnoreCase("years")) {
-						return new CheckIPResponse(ip, "false", "FREEVPN", "FREEVPN");
+					if (type.equalsIgnoreCase("seconds") || type.equalsIgnoreCase("minutes") || type.equalsIgnoreCase("hours"))
+						flag = true;
+					if (type.equalsIgnoreCase("days") && Integer.valueOf(matcher.group(1)) <= 1) {
+						flag = true;
 					}
+					if (flag)
+						return new CheckIPResponse(ip, "true", "FREEVPN-"+matcher.group(1)+matcher.group(2), "FREEVPN");
 				}
-				return new CheckIPResponse(ip, "true", "FREEVPN", "FREEVPN");
+				int tcp = -1;
+				int udp = -1;
+				Matcher m2 = patternTCP.matcher(body);
+				if (m2.find())
+					tcp = Integer.valueOf(m2.group(1));
+				m2 = patternUDP.matcher(body);
+				if (m2.find())
+					udp = Integer.valueOf(m2.group(1));
+				if (checkOpenVPN(ip, tcp, udp)) {
+					return new CheckIPResponse(ip, "true", "FREEVPN-OpenVPN", "FREEVPN");
+				}
+				return new CheckIPResponse(ip, "false", "FREEVPN-PASS", "FREEVPN");
 			}
 		}
 		String url = "https://api.mcua.net/checkip/"+ip;
 		Response response = client.newCall(new Request.Builder().url(url).get().build()).execute();
 		CheckIPResponse rs = gson.fromJson(response.body().string(), CheckIPResponse.class);
 		response.close();
+		rs.type = "MCUA-"+rs.type;
 		return rs;
+	}
+	
+	public static boolean checkOpenVPN(String ip, int tcp, int udp) {
+		if (tcp != -1) {
+			try {
+				Socket tcpSoc = new Socket();
+				tcpSoc.connect(new InetSocketAddress(ip, tcp), 1000);
+				tcpSoc.close();
+				return true;
+			} catch (Exception e) {
+				if (!(e instanceof SocketTimeoutException)) {
+					e.printStackTrace();
+				}
+			}
+		}
+		if (udp != -1) {
+			DatagramSocket socket = null;
+			try {
+				byte[] data = DatatypeConverter.parseHexBinary("3801000000000000000000000000");
+				socket = new DatagramSocket();
+				DatagramPacket dp = new DatagramPacket(data, data.length, InetAddress.getByName(ip), udp);
+				socket.send(dp);
+				data = new byte[26];
+				dp = new DatagramPacket(data, data.length);
+				socket.setSoTimeout(1000);
+				socket.receive(dp);
+				socket.close();
+				return true;
+			} catch (Exception e) {
+				if (!(e instanceof SocketTimeoutException || e instanceof PortUnreachableException)) {
+					e.printStackTrace();
+				}
+			} finally {
+				if (socket != null)
+					socket.close();
+			}
+		}
+		return false;
 	}
 	
 	public static void webhook(DiscordWebHookEnum en, String contents) {
