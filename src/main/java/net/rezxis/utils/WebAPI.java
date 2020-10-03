@@ -3,6 +3,8 @@ package net.rezxis.utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,9 +23,11 @@ public class WebAPI {
 	private static OkHttpClient client;
 	private static Gson gson = new Gson();
 	private static Pattern pattern = Pattern.compile("last check (.*) (.*) ago");
+	public static ExecutorService pool = null;
 	
 	static {
 		client = new OkHttpClient.Builder().build();
+		pool = Executors.newFixedThreadPool(3);
 	}
 	
 	public static void downloadWorld(File file, String secret, String uuid) throws Exception {
@@ -39,6 +43,7 @@ public class WebAPI {
 			fos.close();
 			res.close();
 		}
+		res.close();
 	}
 	
 	public static CheckIPResponse checkIP(String ip) throws IOException {
@@ -46,12 +51,13 @@ public class WebAPI {
 			String freevpn = "https://freevpn.gg/c/"+ip;
 			Response response = client.newCall(new Request.Builder().url(freevpn).get().build()).execute();
 			String body = response.body().string();
+			response.close();
 			if (!body.contains("Not found")) {
 				Matcher matcher = pattern.matcher(body);
 				if (matcher.find()) {
 					String type = matcher.group(2);
 					if (type.equalsIgnoreCase("days")) {
-						if (Integer.valueOf(matcher.group(1)) > 10) {
+						if (Integer.valueOf(matcher.group(1)) > 7) {
 							System.out.println(matcher.group(1));
 							return new CheckIPResponse(ip, "false", "FREEVPN", "FREEVPN");
 						}
@@ -70,19 +76,30 @@ public class WebAPI {
 	}
 	
 	public static void webhook(DiscordWebHookEnum en, String contents) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					@SuppressWarnings("deprecation")
-					Request request = new Request.Builder().url(en.url).addHeader("User-Agent", "Rezxis")
-							.post(RequestBody.create(MediaType.parse("application/JSON; charset=utf-8"), new Gson().toJson(new DiscordWebHookRequest(en.name,"https://i.gyazo.com/141e75149b5cfe462af38d922027043f.png","```"+contents+"```")))).build();
-					Response response = client.newCall(request).execute();
-					response.close();
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}}).start();
+		pool.submit(new DiscordRunnable(en,contents));
+	}
+	
+	public static class DiscordRunnable implements Runnable {
+
+		private DiscordWebHookEnum en;
+		private String contents;
+		
+		public DiscordRunnable(DiscordWebHookEnum en, String contents) {
+			this.en = en;
+			this.contents = contents;
+		}
+		@Override
+		public void run() {
+			try {
+				@SuppressWarnings("deprecation")
+				Request request = new Request.Builder().url(en.url).addHeader("User-Agent", "Rezxis")
+						.post(RequestBody.create(MediaType.parse("application/JSON; charset=utf-8"), new Gson().toJson(new DiscordWebHookRequest(en.name,"https://i.gyazo.com/141e75149b5cfe462af38d922027043f.png","```"+contents+"```")))).build();
+				Response response = client.newCall(request).execute();
+				response.close();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
 	}
 	
 	public enum DiscordWebHookEnum {
