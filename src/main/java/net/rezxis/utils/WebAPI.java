@@ -175,7 +175,8 @@ public class WebAPI {
 		PUNISHMENT("https://discordapp.com/api/webhooks/743082110876909639/rB1JfXCjfcz5kPimxRdtmNNLowqper2P8GXAZaIHoRr2mr_VKbYvaCJvitgCK4T0fdpf","rezxis-punishments"),
 		PRIVATE("https://discordapp.com/api/webhooks/744822613037154344/3NX_eb_H7sK9gXQTXK1qzO2Pe3pvzejloUTep7-QGCeIqb3dHBBXpDp2aMyq75eSuuog","rezxis-private-log"),
 		SCRIPTS("https://discordapp.com/api/webhooks/744822745065586708/3cJyDaDYDlO_Nvke0i1T-zEzXbR1qfgcfSRLm-OKNTNI2J5xXCPIJdlLJlxRgwABD_hM","rezxis-scripts"),
-		WATCHDOG("https://discordapp.com/api/webhooks/744831842238070894/baX0CJDzFLL2bWMi_ZXj1OTGR6Xfhao7nwTt5Qi5unY9G81AH8K0PeJGKEYQXCJVonFT","rezxis-watchdog");
+		WATCHDOG("https://discordapp.com/api/webhooks/744831842238070894/baX0CJDzFLL2bWMi_ZXj1OTGR6Xfhao7nwTt5Qi5unY9G81AH8K0PeJGKEYQXCJVonFT","rezxis-watchdog"),
+		SECALERT("https://discordapp.com/api/webhooks/762104943770730507/CQNc9L5d39seDnnvy5pli1W_r8R-K72R4-v31jtkOiZxljb274lihS1d-gZaTGS4zy2P","rezxis-alert");
 		String url;
 		String name;
 		
