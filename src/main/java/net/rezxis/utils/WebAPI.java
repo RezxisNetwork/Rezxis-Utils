@@ -96,7 +96,7 @@ public class WebAPI {
 				return new CheckIPResponse(ip, "false", "FREEVPN-PASS", "FREEVPN");
 			}
 		}
-		String url = "https://api.mcua.net/checkip/"+ip;
+		String url = "";
 		Response response = client.newCall(new Request.Builder().url(url).get().build()).execute();
 		CheckIPResponse rs = gson.fromJson(response.body().string(), CheckIPResponse.class);
 		response.close();
